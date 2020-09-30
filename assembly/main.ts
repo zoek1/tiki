@@ -33,3 +33,54 @@ export function get_events(): Array<Event> {
     return _events_array;
 }
 
+export function purchase(eventId: i32): boolean {
+    const caller = context.predecessor
+    let amount = context.attachedDeposit
+    const event = events[eventId]
+    let seatPrice = event.seatPrice
+    let totalSupply = event.initialSupply
+    let numSeats = event.occupied
+    let nextSeat = numSeats + 1
+    let current_time = u128.from(env.block_timestamp())
+
+
+    assert(amount == event.seatPrice, 'Deposit the exact amount ' + (amount).toString())
+    assert(nextSeat < totalSupply, ERROR_MAXIMUM_TOKEN_LIMIT_REACHED)
+    assert(event.tickets.contains(caller) == false, 'Only onw ticket per account')
+    assert(current_time <= event.end, 'The event finished ' + current_time.toString())
+
+
+    let new_ticket: Ticket  =  {owner: caller, price: seatPrice, purchased_at: current_time, check_in: false, check_in_at: u128.from(0)}
+
+    event.attendees.pushBack(caller)
+    event.tickets.set(caller, new_ticket)
+    logging.log(event.attendees)
+
+
+
+    event.occupied = nextSeat
+
+    events[eventId] = event
+    logging.log(event.occupied)
+
+
+    ContractPromiseBatch.create(event.host).transfer(amount)
+    // return the tokenId – while typical change methods cannot return data, this
+    // is handy for unit tests
+    return true
+}
+
+export function get_attendess(eventId: i32): Array<Ticket> {
+    const _tickets = new Array<Ticket>()
+    const event = events[eventId]
+
+    if(event.attendees && event.tickets && event.attendees.length != 0) {
+        for(let i: i32 = 0; i < event.attendees.length; i++) {
+            let address = event.attendees[i]
+            _tickets.push(event.tickets.getSome(address));
+        }
+    }
+
+    return _tickets;
+}
+
