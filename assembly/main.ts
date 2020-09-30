@@ -84,3 +84,20 @@ export function get_attendess(eventId: i32): Array<Ticket> {
     return _tickets;
 }
 
+export function check_in(eventId: i32): boolean {
+    const caller = context.predecessor
+    const event = events[eventId]
+    let current_time = u128.from(env.block_timestamp())
+
+    const ticket = event.tickets.getSome(caller)
+
+    if (!ticket.check_in) {
+        ticket.check_in = true
+        ticket.check_in_at = current_time
+        event.tickets.set(caller, ticket)
+
+        return true
+    }
+
+    return false
+}
