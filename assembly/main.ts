@@ -17,3 +17,19 @@ export function factory(name: string, symbol: string, seatPrice: u128, start: u1
 
     return u64(events.length)
 }
+
+export function get_event(eventId: i32): Event {
+    return events[eventId]
+}
+
+export function get_events(): Array<Event> {
+    let _events_array = new Array<Event>();
+    if(events.length != 0) {
+        for(let i: i32 = 0; i < events.length; i++) {
+            _events_array.push(events[i]);
+        }
+    }
+
+    return _events_array;
+}
+
