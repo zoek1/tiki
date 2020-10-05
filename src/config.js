@@ -1,4 +1,4 @@
-const CONTRACT_NAME = process.env.CONTRACT_NAME ||'tiki'
+const CONTRACT_NAME = process.env.CONTRACT_NAME ||'react-front'
 
 function getConfig(env) {
   switch (env) {
