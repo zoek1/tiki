@@ -108,9 +108,9 @@ export default function App() {
   // if not signed in, return early with sign-in prompt
   if (!window.walletConnection.isSignedIn()) {
     return (
-      <main>
-
-        <button onClick={login}>Sign in</button>
+      <main style={{textAlign: 'center'}}>
+        <h1>Let's see what happens!</h1>
+        <Button variant="contained" color="secondary" onClick={login}>Sign in</Button>
       </main>
     )
   }
