@@ -1,7 +1,7 @@
 Tiki
 ==================
 
-DEMO: WIP
+DEMO: https://www.loom.com/share/fc8f330be783421ab8578457360c9471
 
 Quick Start
 ===========
