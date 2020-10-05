@@ -26,6 +26,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
+import Container from "@material-ui/core/Container";
 const { networkId } = getConfig(process.env.NODE_ENV || 'development')
 
 const BOATLOAD_OF_GAS = Big(3).times(10 ** 13).toFixed()
@@ -52,9 +53,18 @@ const useStyles = makeStyles({
   table: {
     minWidth: 650,
   },
+  menu: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    listStyle: 'katakana',
+    textDecoration: 'none',
+    color: '#ccc'
+  }
 })
 
 export default function App() {
+  const classes = useStyles()
+
   const [events, setEvents] = useState([])
   const [myEvents, setMyEvents] = useState([])
 
@@ -80,7 +90,7 @@ export default function App() {
       // window.contract is set by initContract in index.js
       window.contract.get_events({ accountId: window.accountId })
         .then(events => {
-          setEvents(events.sort(event => parseInt(event.start.slice(0, 10)) - timestamp))
+          setEvents(events.sort(event => timestamp - parseInt(event.start.slice(0, 10))))
           updateMyEvents(events)
         })
     }
@@ -99,6 +109,7 @@ export default function App() {
   if (!window.walletConnection.isSignedIn()) {
     return (
       <main>
+
         <button onClick={login}>Sign in</button>
       </main>
     )
@@ -109,7 +120,7 @@ export default function App() {
     <Router>
       <div>
         <nav>
-          <ul>
+          <ul className={classes.menu}>
             <li>
               <Link to="/"  >Home</Link>
             </li>
@@ -121,9 +132,9 @@ export default function App() {
             </li>
             <li>
               {window.accountId}
-              <button className="link" style={{ float: 'right' }} onClick={logout}>
+              <Button className="link" style={{ color: '#C51162' }} onClick={logout}>
                 Sign out
-              </button>
+              </Button>
             </li>
           </ul>
         </nav>
@@ -188,7 +199,7 @@ const NewEvent = (props) => {
     }
   }
 
-  return <>
+  return <Container>
     <Paper className={classes.card}>
     <form action="">
 
@@ -228,22 +239,22 @@ const NewEvent = (props) => {
       <Button onClick={createEvent} variant="contained" color="secondary">Create Event</Button>
     </form>
     </Paper>
-  </>
+  </Container>
 }
 
 const EventDetail = (props) => {
   const id = props.match.params.id
   const requestedEvents = (props.events || []).filter(event => event.id == id)
 
-  return <>
+  return <Container>
     { requestedEvents.length ? <EventCard showTickets={true} event={requestedEvents[0]} myEvents={props.myEvents} /> : <h1>No events exists</h1> }
-  </>
+  </Container>
 }
 
 const MyEvents = (props) => {
-  return <div>
+  return <Container>
     {props.events.filter(event => props.myEvents.indexOf(event.id) >= 0).map(event => <EventCard myEvents={props.myEvents} event={event} />)}
-  </div>
+  </Container>
 }
 
 const EventCard = (props) => {
@@ -312,7 +323,7 @@ const EventCard = (props) => {
     }
   }
 
-  return <>
+  return <Container>
     <Paper className={classes.card}>
     <Link className={classes.title} to={`/event/${event.id}`}><h1>{event.name} <span>#{event.id} - {event.symbol}</span></h1></Link>
     <p>Hosted by {event.host}</p>
@@ -354,14 +365,14 @@ const EventCard = (props) => {
         </TableBody>
       </Table>
     </TableContainer> : <></>}
-    </>
+    </Container>
 }
 
 
 const Home = (props) => {
-  return <div>
+  return <Container>
       {props.events.map(event => <EventCard myEvents={props.myEvents} event={event} />)}
-    </div>
+    </Container>
 }
 
 // this component gets rendered by App after the form is submitted
